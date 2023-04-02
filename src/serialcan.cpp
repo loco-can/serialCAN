@@ -21,7 +21,7 @@ bool SERIALCAN::available(void) {
 		if (_counter < SERIALCAN_MAX_BYTES) {
 
 			if (_check_start(byte)) {
-				// _message[_counter++] = byte;
+				_buffer[_counter++] = byte;
 			}
 		}
 

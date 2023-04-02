@@ -2,7 +2,7 @@
 #define SERIALCAN_H
 
 #include <Arduino.h>
-
+#include "can_com.h"
 
 /*
  * Message from serial port:
@@ -15,18 +15,18 @@
  * Minimum length: 
  */
 
-#define SERIALCAN_MAX_BYTES 15
+#define SERIALCAN_MAX_BYTES 18
 #define SERIALCAN_START_BYTES 2
 #define SERIALCAN_START_VALUE 0xFF
 
 
-struct CAN_MESSAGE {
-    uint32_t id;
-    uint16_t uuid;
-    uint8_t size;
-    uint8_t data[8];
-    uint8_t checksum;
-};
+// struct CAN_MESSAGE {
+//     uint32_t id;
+//     uint16_t uuid;
+//     uint8_t size;
+//     uint8_t data[8];
+//     uint8_t checksum;
+// };
 
 
 class SERIALCAN {
