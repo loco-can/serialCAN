@@ -41,8 +41,11 @@ bool SERIALCAN::send(CAN_MESSAGE* message) {
 
 	length = _message2buffer(message);
 
-	// Serial.write(length);
-	Serial.write(_buffer, 18);
+	// send data as binary
+	Serial.write(_buffer, length);
+
+	// send header as ascii line
+	// Serial.println(SERIAL_END_STRING);
 }
 
 
@@ -88,7 +91,7 @@ uint8_t SERIALCAN::_message2buffer(CAN_MESSAGE* message) {
 		_buffer[_i] = SERIALCAN_START_VALUE;
 	}
 
-	// add size
+	// add data size in bytes
 	_buffer[_i++] = message->size;
 
 	// add can-id
@@ -103,13 +106,22 @@ uint8_t SERIALCAN::_message2buffer(CAN_MESSAGE* message) {
 
 	// add data bytes
 	for (_j = 0; _j < message->size; _j++) {
-		_buffer[_i + _j] = message->data[_j];
+		_buffer[_i++] = message->data[_j];
 	}
 
 	// add checksum
-	_buffer[_i + _j] = _checksum(_buffer, _i + _j);
+	_buffer[_i++] = _checksum(_buffer, _i);
 
-	return _i + _j;
+	// add end string
+	for (_j = 0; _j < sizeof(SERIAL_END_STRING) - 1; _j++) {
+		_buffer[_i++] = SERIAL_END_STRING[_j];
+	}
+
+	// add end of line
+	_buffer[_i++] = 13;
+	_buffer[_i++] = 10;
+
+	return _i;
 }
 
 
@@ -117,9 +129,10 @@ uint8_t SERIALCAN::_message2buffer(CAN_MESSAGE* message) {
 uint8_t SERIALCAN::_checksum(uint8_t* data, uint8_t length) {
 
 	uint8_t sum = 0;
+	uint8_t i;
 
-	for(_i = 0; _i < length; _i++) {
-		sum ^= data[_i];
+	for(_j = 0; _j < length; _j++) {
+		sum ^= data[_j];
 	}
 
 	return sum;
